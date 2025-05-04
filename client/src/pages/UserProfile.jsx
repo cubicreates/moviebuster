@@ -8,6 +8,7 @@ import ProfileContent from '../components/ProfileContent';
 import FavoritesContent from '../components/FavoritesContent';
 import WatchlistContent from '../components/WatchlistContent';
 
+
 const UserProfile = ({ activeTab: initialTab }) => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(initialTab || 'profile');
