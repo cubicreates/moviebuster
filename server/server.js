@@ -4,6 +4,9 @@ import connectDB from './db.js';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,6 +31,175 @@ app.use(json());
 
 app.get('/', (req, res) => {
     res.send('Server is running');
+});
+
+// Test route
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'Backend is working!' });
+});
+
+// User Schema
+const userSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    favorites: [Number],
+    watchlist: [Number]
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Auth routes
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create new user
+        const user = new User({
+            username,
+            email,
+            password: hashedPassword,
+            favorites: [],
+            watchlist: []
+        });
+
+        await user.save();
+        console.log('User registered successfully:', user);
+
+        res.status(201).json({ message: 'Registration successful' });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Registration failed', error: error.message });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET || 'fallback_secret',
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                favorites: user.favorites,
+                watchlist: user.watchlist
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Login failed', error: error.message });
+    }
+});
+
+// Add this route for debugging
+app.get('/api/users/debug', async (req, res) => {
+    try {
+        const users = await User.find({}, { password: 0 }); // Exclude passwords
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users' });
+    }
+});
+
+app.post('/api/users/favorites', async (req, res) => {
+  try {
+    const { userId, movieId } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const movieIdNumber = Number(movieId);
+    const index = user.favorites.indexOf(movieIdNumber);
+
+    if (index > -1) {
+      // Remove movie if it's already in favorites
+      user.favorites.splice(index, 1);
+    } else {
+      // Add movie to favorites
+      user.favorites.push(movieIdNumber);
+    }
+
+    await user.save();
+    res.json({ 
+      message: 'Favorites updated successfully',
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        favorites: user.favorites,
+        watchlist: user.watchlist
+      }
+    });
+  } catch (error) {
+    console.error('Error updating favorites:', error);
+    res.status(500).json({ message: 'Error updating favorites' });
+  }
+});
+
+app.post('/api/users/watchlist', async (req, res) => {
+  try {
+    const { userId, movieId } = req.body;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const movieIdNumber = Number(movieId);
+    const index = user.watchlist.indexOf(movieIdNumber);
+
+    if (index > -1) {
+      // Remove movie if it's already in watchlist
+      user.watchlist.splice(index, 1);
+    } else {
+      // Add movie to watchlist
+      user.watchlist.push(movieIdNumber);
+    }
+
+    await user.save();
+    res.json({ 
+      message: 'Watchlist updated successfully',
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        favorites: user.favorites,
+        watchlist: user.watchlist
+      }
+    });
+  } catch (error) {
+    console.error('Error updating watchlist:', error);
+    res.status(500).json({ message: 'Error updating watchlist' });
+  }
 });
 
 app.listen(port, () => {

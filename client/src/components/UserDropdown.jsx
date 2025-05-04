@@ -7,12 +7,13 @@ const UserDropdown = ({ isOpen, onClose }) => {
 
     const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
-    const username = userData.name || 'User';
+    const username = userData.username || 'User'; // Changed from userData.name
     const email = userData.email || 'user@example.com';
 
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('user');
+        localStorage.removeItem('token'); // Also remove the token
         navigate('/');
         onClose();
     };

@@ -21,23 +21,30 @@ const Login = () => {
         
         if (activeView === 'login') {
             try {
+                console.log('Attempting login with:', { email, password }); // Debug log
+
                 const response = await fetch('http://localhost:5100/api/auth/login', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ email, password })
                 });
                 
                 const data = await response.json();
+                console.log('Login response:', data); // Debug log
+
                 if (response.ok) {
                     localStorage.setItem('user', JSON.stringify(data.user));
                     localStorage.setItem('token', data.token);
+                    localStorage.setItem('isAuthenticated', 'true');
                     navigate('/profile');
                 } else {
-                    alert(data.message);
+                    alert(data.message || 'Login failed');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                alert('Login failed');
+                alert('Login failed. Please check your credentials and try again.');
             }
         } else if (activeView === 'register') {
             try {

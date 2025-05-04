@@ -12,6 +12,9 @@ const Navbar = ({ onNewClick }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   const navigate = useNavigate();
 
+  const userData = JSON.parse(localStorage.getItem('user') || '{}');
+  const username = userData.username || 'User';
+
   const handleSearchResults = (results) => {
     // Handle search results here
     console.log('Search results:', results);
@@ -72,9 +75,17 @@ const Navbar = ({ onNewClick }) => {
           
           <button 
             onClick={handleAuthClick}
-            className="p-1 rounded-full hover:bg-gray-700/50 transition-colors"
+            className="p-1 rounded-full hover:ring-2 hover:ring-white/70 transition-all duration-200"
           >
-            <User className="h-6 w-6 text-white/90 hover:text-white transition-colors" />
+            {isAuthenticated ? (
+              <div className="w-8 h-8 rounded-full bg-moviebuster-red flex items-center justify-center">
+                <span className="text-sm font-bold text-white">
+                  {username.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            ) : (
+              <User className="h-6 w-6 text-white/90 hover:text-white transition-colors" />
+            )}
           </button>
           
           {/* Mobile Menu Button */}

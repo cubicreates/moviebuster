@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { Heart, Plus } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import MovieHero from '../components/MovieHero';
@@ -17,6 +18,7 @@ import {
 const MovieDetails = () => {
   const { movieSlug } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const movieId = location.state?.movieId;
   
   const [movie, setMovie] = useState(null);
@@ -25,6 +27,15 @@ const MovieDetails = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user?.favorites?.includes(movieId) || false;
+  });
+
+  const [isInWatchlist, setIsInWatchlist] = useState(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user?.watchlist?.includes(movieId) || false;
+  });
 
   useEffect(() => {
     const loadMovieData = async () => {
@@ -64,6 +75,78 @@ const MovieDetails = () => {
     setSearchResults(results);
   };
 
+  const handleFavorite = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
+    if (!isAuthenticated) {
+      navigate('/not-logged-in');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5100/api/users/favorites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          movieId: Number(movieId)
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update localStorage with new user data
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsFavorite(!isFavorite);
+      } else {
+        throw new Error('Failed to update favorites');
+      }
+    } catch (error) {
+      console.error('Error updating favorites:', error);
+      alert('Failed to update favorites');
+    }
+  };
+
+  const handleWatchlist = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
+    if (!isAuthenticated) {
+      navigate('/not-logged-in');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5100/api/users/watchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          movieId: Number(movieId)
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update localStorage with new user data
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsInWatchlist(!isInWatchlist);
+      } else {
+        throw new Error('Failed to update watchlist');
+      }
+    } catch (error) {
+      console.error('Error updating watchlist:', error);
+      alert('Failed to update watchlist');
+    }
+  };
+
   if (error) return <NotFound />;
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-moviebuster-dark">
@@ -79,6 +162,33 @@ const MovieDetails = () => {
         <MovieHero movie={movie} />
         
         <div className="container mx-auto px-4 py-8">
+          {/* Add buttons below MovieHero */}
+          <div className="flex gap-4 mb-6">
+            <button
+              onClick={handleFavorite}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all
+                ${isFavorite 
+                  ? 'bg-moviebuster-red text-white' 
+                  : 'bg-white/10 hover:bg-moviebuster-red text-white'
+                }`}
+            >
+              <Heart className={`h-5 w-5 ${isFavorite ? 'fill-current' : ''}`} />
+              {isFavorite ? 'Added to Favorites' : 'Add to Favorites'}
+            </button>
+
+            <button
+              onClick={handleWatchlist}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all
+                ${isInWatchlist 
+                  ? 'bg-moviebuster-red text-white' 
+                  : 'bg-white/10 hover:bg-moviebuster-red text-white'
+                }`}
+            >
+              <Plus className="h-5 w-5" />
+              {isInWatchlist ? 'Added to Watchlist' : 'Add to Watchlist'}
+            </button>
+          </div>
+
           <div className="flex flex-col md:flex-row gap-8">
             {/* Left Column - Movie Info */}
             <div className="flex-grow">

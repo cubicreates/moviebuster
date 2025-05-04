@@ -8,40 +8,54 @@ import ProfileContent from '../components/ProfileContent';
 import FavoritesContent from '../components/FavoritesContent';
 import WatchlistContent from '../components/WatchlistContent';
 
-
 const UserProfile = ({ activeTab: initialTab }) => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState(initialTab || 'profile');
-    const [username, setUsername] = useState('User');
-    const [email, setEmail] = useState('user@example.com');
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        try {
-            const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-            if (!isAuthenticated) {
-                navigate('/not-logged-in');
-                return;
-            }
+        const checkAuth = () => {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const token = localStorage.getItem('token');
+                
+                if (!user || !token) {
+                    navigate('/not-logged-in');
+                    return;
+                }
 
-            const userData = JSON.parse(localStorage.getItem('user') || '{}');
-            setUsername(userData.name || 'User');
-            setEmail(userData.email || 'user@example.com');
-        } catch (error) {
-            console.error('Error loading user data:', error);
-            navigate('/not-logged-in');
-        }
+                setUserData(user);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                navigate('/not-logged-in');
+            }
+        };
+
+        checkAuth();
     }, [navigate]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     const renderContent = () => {
         switch (activeTab) {
             case 'profile':
-                return <ProfileContent username={username} setUsername={setUsername} email={email} setEmail={setEmail} />;
+                return <ProfileContent 
+                    username={userData.username} 
+                    email={userData.email}
+                />;
             case 'favorites':
-                return <FavoritesContent />;
+                return <FavoritesContent userId={userData.id} />;
             case 'watchlist':
-                return <WatchlistContent />;
+                return <WatchlistContent userId={userData.id} />;
             default:
-                return <ProfileContent username={username} setUsername={setUsername} email={email} setEmail={setEmail} />;
+                return <ProfileContent 
+                    username={userData.username}
+                    email={userData.email}
+                />;
         }
     };
 
@@ -50,10 +64,10 @@ const UserProfile = ({ activeTab: initialTab }) => {
             <Navbar />
 
             <main className="flex-1">
-                <UserBanner username={username} />
+                <UserBanner username={userData.username} />
 
                 <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-2xl font-bold mb-6">Hi, {username}! 👋</h1>
+                    <h1 className="text-2xl font-bold mb-6">Hi, {userData.username}! 👋</h1>
 
                     <UserDashboard activeTab={activeTab} setActiveTab={setActiveTab} />
 

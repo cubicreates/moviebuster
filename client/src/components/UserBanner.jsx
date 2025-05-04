@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getImageUrl } from '../api/tmdb';
 
-const UserBanner = ({ username }) => {
+const UserBanner = () => {
     const [bannerImage, setBannerImage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    const username = userData.username || 'User';
 
     const fetchRandomBanner = async () => {
         try {

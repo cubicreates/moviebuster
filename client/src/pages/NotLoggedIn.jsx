@@ -23,12 +23,12 @@ const NotLoggedIn = () => {
         <>
             <Navbar />
             <div className="min-h-screen flex flex-col items-center justify-center bg-light-primary dark:bg-dark-primary text-white p-4 text-center">
-                <div className="max-w-md w-full space-y-8 bg-moviebuster-darkblue p-8 rounded-lg shadow-lg border-2 border-moviebuster-yellow animate-fade-in">
+                <div className="max-w-md w-full space-y-8 bg-moviebuster-darkblue p-8 rounded-lg shadow-lg border-2 border-white animate-fade-in">
                     <div className="absolute top-4 right-4">
                         <ThemeToggle />
                     </div>
                     <div className="space-y-7">
-                        <h1 className="text-4xl font-bold mb-4 text-moviebuster-yellow">Not Signed In</h1>
+                        <h1 className="text-4xl font-bold mb-4 text-white">Not Signed In</h1>
                         <p className="text-xl mb-6">
                             Seems like you are not logged in
                         </p>
@@ -36,7 +36,7 @@ const NotLoggedIn = () => {
                             Redirecting to login page in {timeLeft} seconds...
                         </p>
                         <div className="mt-10">
-                            <Link to="/login" className="px-6 py-3 bg-moviebuster-blue text-white rounded-md hover:bg-moviebuster-blue/90 transition font-medium">
+                            <Link to="/login" className="px-6 py-3 bg-moviebuster-red text-white rounded-md hover:bg-moviebuster-red/90 transition font-medium">
                                 Go to Login
                             </Link>
                         </div>
