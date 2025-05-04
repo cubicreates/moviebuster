@@ -6,11 +6,14 @@ import { getImageUrl } from '../api/tmdb';
 const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   const [isFavorite, setIsFavorite] = useState(() => {
+    if (!isAuthenticated) return false;
     const user = JSON.parse(localStorage.getItem('user'));
     return user?.favorites?.includes(movie.id) || false;
   });
   const [isInWatchlist, setIsInWatchlist] = useState(() => {
+    if (!isAuthenticated) return false;
     const user = JSON.parse(localStorage.getItem('user'));
     return user?.watchlist?.includes(movie.id) || false;
   });
@@ -29,12 +32,19 @@ const MovieCard = ({ movie }) => {
     e.stopPropagation();
     
     const user = JSON.parse(localStorage.getItem('user'));
+    console.log('User data:', user); // Debug log
+
     if (!user) {
       navigate('/not-logged-in');
       return;
     }
 
     try {
+      console.log('Sending request with:', { 
+        userId: user._id,
+        movieId: Number(movie.id)
+      }); // Debug log
+
       const response = await fetch('http://localhost:5100/api/users/favorites', {
         method: 'POST',
         headers: {
@@ -42,22 +52,26 @@ const MovieCard = ({ movie }) => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          userId: user.id,
-          movieId: movie.id
+          userId: user.id, // Change back to user.id if that's how it's stored
+          movieId: Number(movie.id)
         })
       });
 
+      console.log('Response status:', response.status); // Debug log
+
       if (!response.ok) {
-        throw new Error('Failed to update favorites');
+        const errorData = await response.json();
+        console.log('Error data:', errorData); // Debug log
+        throw new Error(errorData.message || 'Failed to update favorites');
       }
 
       const updatedUser = await response.json();
-      // Update localStorage with new user data
+      console.log('Updated user:', updatedUser); // Debug log
       localStorage.setItem('user', JSON.stringify(updatedUser.user));
       setIsFavorite(!isFavorite);
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to update favorites');
+      alert(error.message);
     }
   };
 
@@ -66,12 +80,15 @@ const MovieCard = ({ movie }) => {
     e.stopPropagation();
 
     const user = JSON.parse(localStorage.getItem('user'));
+    console.log('User data for watchlist:', user); // Debug log
+
     if (!user) {
       navigate('/not-logged-in');
       return;
     }
 
     try {
+      // Use user.id consistently across the application
       const response = await fetch('http://localhost:5100/api/users/watchlist', {
         method: 'POST',
         headers: {
@@ -79,22 +96,26 @@ const MovieCard = ({ movie }) => {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
-          userId: user.id,
-          movieId: movie.id
+          userId: user.id, // Use user.id consistently
+          movieId: Number(movie.id)
         })
       });
 
+      console.log('Response status:', response.status); // Debug log
+
       if (!response.ok) {
-        throw new Error('Failed to update watchlist');
+        const errorData = await response.json();
+        console.log('Error data:', errorData); // Debug log
+        throw new Error(errorData.message || 'Failed to update watchlist');
       }
 
       const updatedUser = await response.json();
-      // Update localStorage with new user data
+      console.log('Updated user:', updatedUser); // Debug log
       localStorage.setItem('user', JSON.stringify(updatedUser.user));
       setIsInWatchlist(!isInWatchlist);
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to update watchlist');
+      alert(error.message);
     }
   };
 
@@ -130,7 +151,7 @@ const MovieCard = ({ movie }) => {
             <button 
               onClick={handleAddToList}
               className={`p-2 rounded-full transition ${
-                isInWatchlist 
+                isAuthenticated && isInWatchlist 
                   ? 'bg-moviebuster-red' 
                   : 'bg-black/40 hover:bg-moviebuster-red/60'
               }`}
@@ -140,12 +161,12 @@ const MovieCard = ({ movie }) => {
             <button 
               onClick={handleFavorite}
               className={`p-2 rounded-full transition ${
-                isFavorite 
+                isAuthenticated && isFavorite 
                   ? 'bg-moviebuster-red' 
                   : 'bg-black/40 hover:bg-moviebuster-red/60'
               }`}
             >
-              <Heart className={`w-4 h-4 text-white ${isFavorite ? 'fill-white' : ''}`} />
+              <Heart className={`w-4 h-4 text-white ${isAuthenticated && isFavorite ? 'fill-white' : ''}`} />
             </button>
           </div>
           {movie.vote_average && (

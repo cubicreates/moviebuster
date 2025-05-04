@@ -13,18 +13,34 @@ const FavoritesContent = () => {
             if (!user) return;
 
             try {
-                const response = await fetch(`http://localhost:5100/api/users/${user._id}/favorites`, {
+                // Fetch user's favorites from the database
+                const response = await fetch(`http://localhost:5100/api/users/${user.id}/favorites`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch favorites');
+                }
+
                 const data = await response.json();
                 
-                // Fetch movie details for each ID
+                // Fetch detailed movie information for each favorite movie ID
                 const moviesData = await Promise.all(
-                    data.favorites.map(id => fetchMovieDetails(id))
+                    data.favorites.map(async (movieId) => {
+                        try {
+                            return await fetchMovieDetails(movieId);
+                        } catch (error) {
+                            console.error(`Error fetching movie ${movieId}:`, error);
+                            return null;
+                        }
+                    })
                 );
-                setFavorites(moviesData);
+
+                // Filter out any null values from failed fetches
+                const validMovies = moviesData.filter(movie => movie !== null);
+                setFavorites(validMovies);
             } catch (error) {
                 console.error('Error loading favorites:', error);
             } finally {
@@ -35,8 +51,39 @@ const FavoritesContent = () => {
         loadFavorites();
     }, []);
 
+    const handleRemoveFromFavorites = async (movieId) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        try {
+            const response = await fetch('http://localhost:5100/api/users/favorites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    userId: user.id,
+                    movieId: movieId
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('user', JSON.stringify(data.user));
+                setFavorites(favorites.filter(movie => movie.id !== movieId));
+            }
+        } catch (error) {
+            console.error('Error removing from favorites:', error);
+        }
+    };
+
     if (isLoading) {
-        return <div className="py-8 text-center">Loading your favorite movies...</div>;
+        return (
+            <div className="py-8 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-moviebuster-red mx-auto"></div>
+                <p className="mt-4">Loading your favorite movies...</p>
+            </div>
+        );
     }
 
     if (favorites.length === 0) {
@@ -53,8 +100,8 @@ const FavoritesContent = () => {
         <div>
             <h2 className="text-xl font-semibold mb-6">My Favorites</h2>
             <MovieGrid 
-                movies={favorites} 
-                onRemove={id => setFavorites(favorites.filter(movie => movie.id !== id))}
+                items={favorites} 
+                onRemove={handleRemoveFromFavorites}
                 showRemoveButton={true}
             />
         </div>

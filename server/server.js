@@ -26,6 +26,14 @@ connectDB()
         process.exit(1);
     });
 
+mongoose.connection.on('connected', () => {
+  console.log('MongoDB connection established successfully');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
+
 app.use(cors());
 app.use(json());
 
@@ -131,24 +139,33 @@ app.get('/api/users/debug', async (req, res) => {
 app.post('/api/users/favorites', async (req, res) => {
   try {
     const { userId, movieId } = req.body;
+    console.log('Received request:', { userId, movieId }); // Debug log
+
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+
     const user = await User.findById(userId);
+    console.log('Found user:', user); // Debug log
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ 
+        message: 'User not found',
+        requestedId: userId
+      });
     }
 
     const movieIdNumber = Number(movieId);
     const index = user.favorites.indexOf(movieIdNumber);
 
     if (index > -1) {
-      // Remove movie if it's already in favorites
       user.favorites.splice(index, 1);
     } else {
-      // Add movie to favorites
       user.favorites.push(movieIdNumber);
     }
 
     await user.save();
+    
     res.json({ 
       message: 'Favorites updated successfully',
       user: {
@@ -160,36 +177,51 @@ app.post('/api/users/favorites', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error updating favorites:', error);
-    res.status(500).json({ message: 'Error updating favorites' });
+    console.error('Server error:', error); // Debug log
+    res.status(500).json({ 
+      message: 'Error updating favorites',
+      error: error.message 
+    });
   }
 });
 
 app.post('/api/users/watchlist', async (req, res) => {
   try {
     const { userId, movieId } = req.body;
-    const user = await User.findById(userId);
+    console.log('Received request:', { userId, movieId }); // Debug log
+
+    // Try finding user by both id formats
+    const user = await User.findOne({
+      $or: [
+        { _id: userId },
+        { id: userId }
+      ]
+    });
+
+    console.log('Found user:', user); // Debug log
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ 
+        message: 'User not found',
+        requestedId: userId
+      });
     }
 
     const movieIdNumber = Number(movieId);
     const index = user.watchlist.indexOf(movieIdNumber);
 
     if (index > -1) {
-      // Remove movie if it's already in watchlist
       user.watchlist.splice(index, 1);
     } else {
-      // Add movie to watchlist
       user.watchlist.push(movieIdNumber);
     }
 
     await user.save();
+    
     res.json({ 
       message: 'Watchlist updated successfully',
       user: {
-        id: user._id,
+        id: user._id, // Make sure to send back consistent id format
         username: user.username,
         email: user.email,
         favorites: user.favorites,
@@ -197,9 +229,40 @@ app.post('/api/users/watchlist', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error updating watchlist:', error);
-    res.status(500).json({ message: 'Error updating watchlist' });
+    console.error('Server error:', error);
+    res.status(500).json({ 
+      message: 'Error updating watchlist',
+      error: error.message 
+    });
   }
+});
+
+app.get('/api/users/:userId/favorites', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({ favorites: user.favorites });
+    } catch (error) {
+        console.error('Error fetching favorites:', error);
+        res.status(500).json({ message: 'Error fetching favorites' });
+    }
+});
+
+app.get('/api/users/:userId/watchlist', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({ watchlist: user.watchlist });
+    } catch (error) {
+        console.error('Error fetching watchlist:', error);
+        res.status(500).json({ message: 'Error fetching watchlist' });
+    }
 });
 
 app.listen(port, () => {
