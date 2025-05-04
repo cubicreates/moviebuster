@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchPopularTVShows } from '../api/tmdb';
+import { fetchMovieDetails } from '../api/tmdb';
 import { List } from 'lucide-react';
 import MovieGrid from './MovieGrid';
 
@@ -9,10 +9,22 @@ const WatchlistContent = () => {
 
     useEffect(() => {
         const loadWatchlist = async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) return;
+
             try {
-                setIsLoading(true);
-                const shows = await fetchPopularTVShows();
-                setWatchlist(shows.slice(0, 6));
+                const response = await fetch(`http://localhost:5100/api/users/${user._id}/watchlist`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await response.json();
+                
+                // Fetch movie details for each ID
+                const moviesData = await Promise.all(
+                    data.watchlist.map(id => fetchMovieDetails(id))
+                );
+                setWatchlist(moviesData);
             } catch (error) {
                 console.error('Error loading watchlist:', error);
             } finally {

@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Search from './pages/Search';
 import NotLoggedIn from './pages/NotLoggedIn';
 import UserProfile from './pages/UserProfile';
+import MyList from './pages/MyList';
 
 const AppRoutes = () => {
   return (
@@ -40,6 +41,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <UserProfile activeTab="watchlist" />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/my-list" 
+        element={
+          <ProtectedRoute>
+            <MyList />
           </ProtectedRoute>
         } 
       />

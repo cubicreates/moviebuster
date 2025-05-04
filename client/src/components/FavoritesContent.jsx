@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchTopRated } from '../api/tmdb';
+import { fetchMovieDetails } from '../api/tmdb';
 import { Heart } from 'lucide-react';
 import MovieGrid from './MovieGrid';
 
@@ -9,10 +9,22 @@ const FavoritesContent = () => {
 
     useEffect(() => {
         const loadFavorites = async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) return;
+
             try {
-                setIsLoading(true);
-                const movies = await fetchTopRated();
-                setFavorites(movies.slice(0, 6));
+                const response = await fetch(`http://localhost:5100/api/users/${user._id}/favorites`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await response.json();
+                
+                // Fetch movie details for each ID
+                const moviesData = await Promise.all(
+                    data.favorites.map(id => fetchMovieDetails(id))
+                );
+                setFavorites(moviesData);
             } catch (error) {
                 console.error('Error loading favorites:', error);
             } finally {

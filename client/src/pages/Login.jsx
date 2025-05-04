@@ -16,28 +16,52 @@ const Login = () => {
     const [resetEmail, setResetEmail] = useState('');
     const [resetSent, setResetSent] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (activeView === 'login') {
-            // Check credentials
-            if (email === 'ad@email.com' && password === '123') {
-                // Set some user data in localStorage
-                localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('user', JSON.stringify({
-                    email: email,
-                    name: 'Admin User'
-                }));
-                // Redirect to profile page
-                navigate('/profile');
-            } else {
-                alert('Invalid credentials');
+            try {
+                const response = await fetch('http://localhost:5100/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('token', data.token);
+                    navigate('/profile');
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed');
             }
-        }
-        
-        // For demo purposes
-        if (activeView === 'forgot' && resetEmail) {
-            setResetSent(true);
+        } else if (activeView === 'register') {
+            try {
+                const response = await fetch('http://localhost:5100/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: name,
+                        email, 
+                        password 
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    setActiveView('login');
+                    alert('Registration successful! Please login.');
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed');
+            }
         }
     };
 

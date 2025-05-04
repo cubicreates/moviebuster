@@ -11,29 +11,69 @@ const MovieCard = ({ movie }) => {
   const posterPath = movie.poster_path;
   const overview = movie.overview || 'No description available';
 
-  const isAuthenticated = false; // Set to false to test NotLoggedIn redirect
-
   const handlePlayClick = () => {
     const movieSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     navigate(`/${movieSlug}`, { state: { movieId: movie.id } });
   };
 
-  const handleFavorite = (e) => {
+  const handleFavorite = async (e) => {
     e.preventDefault();
-    if (!isAuthenticated) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
       navigate('/not-logged-in');
       return;
     }
-    // Add favorite logic here for authenticated users
+
+    try {
+      const response = await fetch('http://localhost:5100/api/users/favorites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: user._id,
+          movieId: movie.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add to favorites');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to add to favorites');
+    }
   };
 
-  const handleAddToList = (e) => {
+  const handleAddToList = async (e) => {
     e.preventDefault();
-    if (!isAuthenticated) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
       navigate('/not-logged-in');
       return;
     }
-    // Add to list logic here for authenticated users
+
+    try {
+      const response = await fetch('http://localhost:5100/api/users/watchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: user._id,
+          movieId: movie.id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add to watchlist');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to add to watchlist');
+    }
   };
 
   return (
