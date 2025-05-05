@@ -162,29 +162,28 @@ const MovieDetails = () => {
         <MovieHero movie={movie} />
         
         <div className="container mx-auto px-4 py-8">
-          {/* Add buttons below MovieHero */}
           <div className="flex gap-4 mb-6">
             <button
               onClick={handleFavorite}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all transform hover:scale-105
                 ${isFavorite 
-                  ? 'bg-moviebuster-red text-white' 
-                  : 'bg-white/10 hover:bg-moviebuster-red text-white'
+                  ? 'bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white shadow-lg hover:shadow-xl' 
+                  : 'bg-white/10 hover:bg-[#f3d100] dark:hover:bg-moviebuster-red text-white hover:text-[#000e3d] dark:hover:text-white hover:shadow-lg'
                 }`}
             >
-              <Heart className={`h-5 w-5 ${isFavorite ? 'fill-current' : ''}`} />
+              <Heart className={`h-5 w-5 transition-transform hover:scale-110 ${isFavorite ? 'fill-[#000e3d] dark:fill-white' : ''}`} />
               {isFavorite ? 'Added to Favorites' : 'Add to Favorites'}
             </button>
 
             <button
               onClick={handleWatchlist}
-              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-all transform hover:scale-105
                 ${isInWatchlist 
-                  ? 'bg-moviebuster-red text-white' 
-                  : 'bg-white/10 hover:bg-moviebuster-red text-white'
+                  ? 'bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white shadow-lg hover:shadow-xl' 
+                  : 'bg-white/10 hover:bg-[#f3d100] dark:hover:bg-moviebuster-red text-white hover:text-[#000e3d] dark:hover:text-white hover:shadow-lg'
                 }`}
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-5 w-5 transition-transform hover:scale-110" />
               {isInWatchlist ? 'Added to Watchlist' : 'Add to Watchlist'}
             </button>
           </div>

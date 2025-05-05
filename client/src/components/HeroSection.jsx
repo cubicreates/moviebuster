@@ -142,8 +142,8 @@ const HeroSection = ({ movies = [] }) => {
           <h1 className="text-4xl md:text-6xl font-bold mb-4">{title}</h1>
           <div className="flex items-center text-sm space-x-4 mb-4">
             {featuredMovie?.vote_average && (
-              <span className="bg-moviebuster-red text-moviebuster-darkblue px-2 py-0.5 rounded font-semibold flex items-center gap-1">
-                <Star className="w-4 h-4 fill-moviebuster-darkblue" />
+              <span className="bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white px-2 py-0.5 rounded font-semibold flex items-center gap-1">
+                <Star className="w-4 h-4 fill-[#000e3d] dark:fill-white" />
                 {featuredMovie.vote_average.toFixed(1)}
               </span>
             )}
@@ -157,14 +157,14 @@ const HeroSection = ({ movies = [] }) => {
           <div className="flex space-x-4">
             <button 
               onClick={handlePlayClick}
-              className="px-6 py-3 bg-moviebuster-red text-white rounded-md flex items-center hover:bg-white/90 hover:text-moviebuster-red transition font-semibold"
+              className="px-6 py-3 bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white rounded-md flex items-center hover:bg-[#f3d100]/90 dark:hover:bg-white/90 hover:text-[#000e3d] dark:hover:text-moviebuster-red transition font-semibold"
             >
               <Play className="w-5 h-5 mr-2" />
               Play
             </button>
             <button 
               onClick={handleInfoClick}
-              className="px-6 py-3 bg-moviebuster-darkblue/50 text-white rounded-md flex items-center hover:bg-moviebuster-darkblue/70 transition"
+              className="px-6 py-3 bg-[#000e3d]/50 dark:bg-[#c1bfba]/50 text-white rounded-md flex items-center hover:bg-[#000e3d]/70 dark:hover:bg-grey/70 transition"
             >
               <Info className="w-5 h-5 mr-2" />
               More Info

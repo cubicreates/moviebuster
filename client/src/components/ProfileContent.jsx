@@ -102,7 +102,7 @@ const ProfileContent = ({ username, setUsername, email, setEmail }) => {
                             <button
                                 type="button"
                                 onClick={() => setShowPasswordChange(true)}
-                                className="flex items-center text-sm font-medium text-moviebuster-red hover:underline mt-4"
+                                className="flex items-center text-sm font-medium text-[#f3d100] dark:text-moviebuster-red hover:underline mt-4"
                             >
                                 <Lock className="h-4 w-4 mr-2" /> Change Password
                             </button>
@@ -203,7 +203,7 @@ const ProfileContent = ({ username, setUsername, email, setEmail }) => {
                     <div className="pt-4">
                         <button
                             type="submit"
-                            className="w-full bg-moviebuster-red/70 text-white hover:bg-white hover:text-moviebuster-red font-medium py-2 px-4 rounded-md transition-colors"
+                            className="w-full bg-[#f3d100] dark:bg-moviebuster-red/70 text-[#000e3d] dark:text-white hover:bg-[#f3d100]/90 dark:hover:bg-white dark:hover:text-moviebuster-red font-medium py-2 px-4 rounded-md transition-colors"
                         >
                             <Check className="h-4 w-4 mr-2 inline" /> Save Changes
                         </button>

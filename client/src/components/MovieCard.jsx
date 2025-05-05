@@ -144,34 +144,41 @@ const MovieCard = ({ movie }) => {
           <div className="flex items-center space-x-3 mb-2">
             <button 
               onClick={handlePlayClick}
-              className="p-2 bg-moviebuster-red rounded-full hover:bg-white/90 hover:text-moviebuster-red transition"
+              className="p-2 bg-[#f3d100] dark:bg-moviebuster-red rounded-full hover:bg-white/90 hover:text-[#000e3d] dark:hover:text-moviebuster-red transition"
             >
-              <Play className="w-4 h-4 text-moviebuster-darkblue" />
+              <Play className="w-4 h-4 text-[#000e3d] dark:text-white" />
             </button>
             <button 
               onClick={handleAddToList}
               className={`p-2 rounded-full transition ${
                 isAuthenticated && isInWatchlist 
-                  ? 'bg-moviebuster-red' 
-                  : 'bg-black/40 hover:bg-moviebuster-red/60'
+                  ? 'bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white' 
+                  : 'bg-black/40 hover:bg-[#f3d100]/60 dark:hover:bg-moviebuster-red/60'
               }`}
             >
-              <Plus className="w-4 h-4 text-white" />
+              <Plus className="w-4 h-4 text-white hover:text-[#000e3d] dark:text-white" />
             </button>
             <button 
               onClick={handleFavorite}
               className={`p-2 rounded-full transition ${
                 isAuthenticated && isFavorite 
-                  ? 'bg-moviebuster-red' 
-                  : 'bg-black/40 hover:bg-moviebuster-red/60'
+                  ? 'bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white' 
+                  : 'bg-black/40 hover:bg-[#f3d100]/60 dark:hover:bg-moviebuster-red/60'
               }`}
             >
-              <Heart className={`w-4 h-4 text-white ${isAuthenticated && isFavorite ? 'fill-white' : ''}`} />
+              <Heart className={`w-4 h-4 ${
+                isAuthenticated && isFavorite 
+                  ? 'fill-[#000e3d] dark:fill-white text-[#000e3d] dark:text-white' 
+                  : 'text-white hover:text-[#000e3d] dark:text-white'
+              }`} />
             </button>
           </div>
           {movie.vote_average && (
-            <div className="text-sm text-white/90">
-              <span className="text-moviebuster-yellow font-bold">{movie.vote_average.toFixed(1)}</span>/10
+            <div className="text-sm">
+              <span className="text-[#f3d100] dark:text-moviebuster-red font-bold">
+                {movie.vote_average.toFixed(1)}
+              </span>
+              <span className="text-white/90">/10</span>
             </div>
           )}
         </div>

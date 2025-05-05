@@ -4,6 +4,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import MovieBackground from '../components/MovieBackground';
+import Toast from '../components/Toast';
 
 const Login = () => {
     const navigate = useNavigate(); // Add this
@@ -15,6 +16,12 @@ const Login = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [resetEmail, setResetEmail] = useState('');
     const [resetSent, setResetSent] = useState(false);
+    const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+    const showToast = (message, type = 'success') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,13 +45,14 @@ const Login = () => {
                     localStorage.setItem('user', JSON.stringify(data.user));
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('isAuthenticated', 'true');
-                    navigate('/profile');
+                    showToast('Login successful! Redirecting...', 'success');
+                    setTimeout(() => navigate('/profile'), 1000);
                 } else {
-                    alert(data.message || 'Login failed');
+                    showToast(data.message || 'Login failed', 'error');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                alert('Login failed. Please check your credentials and try again.');
+                showToast('Login failed. Please check your credentials.', 'error');
             }
         } else if (activeView === 'register') {
             try {
@@ -61,13 +69,13 @@ const Login = () => {
                 const data = await response.json();
                 if (response.ok) {
                     setActiveView('login');
-                    alert('Registration successful! Please login.');
+                    showToast('Registration successful! Please login.', 'success');
                 } else {
-                    alert(data.message);
+                    showToast(data.message || 'Registration failed', 'error');
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                alert('Registration failed');
+                showToast('Registration failed. Please try again.', 'error');
             }
         }
     };
@@ -78,16 +86,23 @@ const Login = () => {
 
     return (
         <div className="relative min-h-screen">
+            {toast.show && (
+                <Toast 
+                    message={toast.message} 
+                    type={toast.type} 
+                    onClose={() => setToast({ show: false, message: '', type: 'success' })} 
+                />
+            )}
             <MovieBackground />
             
             <div className="relative z-10">
                 <Navbar />
 
                 <main className="container mx-auto pt-24 pb-12 px-4 flex-col flex items-center justify-center">
-                    <div className="w-full max-w-md bg-black/50 backdrop-blur-sm rounded-lg p-8 
+                    <div className="w-full max-w-md bg-[#000e3d]/50 dark:bg-black/50 backdrop-blur-sm rounded-lg p-8 
                         border border-white/20 
                         shadow-[0_0_15px_rgba(255,255,255,0.07)]
-                        transition-all duration-300 hover:bg-black/60">
+                        transition-all duration-300 hover:bg-[#000e3d]/60 dark:hover:bg-black/60">
                         <h2 className="text-2xl font-bold text-center mb-6">
                             {activeView === 'login' && 'Sign In'}
                             {activeView === 'register' && 'Create Account'}
@@ -131,7 +146,7 @@ const Login = () => {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full bg-moviebuster-red text-white font-medium py-2 rounded-md hover:bg-white/90 hover:text-moviebuster-red transition mb-4"
+                                        className="w-full bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white font-medium py-2 rounded-md hover:bg-[#f3d100]/90 dark:hover:bg-moviebuster-red/90 transition mb-4"
                                     >
                                         Sign In
                                     </button>
@@ -139,7 +154,7 @@ const Login = () => {
                                 <div className="text-center space-y-2">
                                     <button
                                         onClick={() => setActiveView('forgot')}
-                                        className="text-sm text-moviebuster-red hover:underline"
+                                        className="text-sm text-[#f3d100] dark:text-moviebuster-red hover:underline"
                                     >
                                         Forgot Password?
                                     </button>
@@ -147,7 +162,7 @@ const Login = () => {
                                         Don't have an account?{' '}
                                         <button
                                             onClick={() => setActiveView('register')}
-                                            className="text-moviebuster-red hover:underline"
+                                            className="text-[#f3d100] dark:text-moviebuster-red hover:underline"
                                         >
                                             Sign up
                                         </button>
@@ -217,7 +232,7 @@ const Login = () => {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full bg-moviebuster-red text-white font-medium py-2 rounded-md hover:bg-white/90 hover:text-moviebuster-red transition mb-4"
+                                        className="w-full bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white font-medium py-2 rounded-md hover:bg-[#f3d100]/90 dark:hover:bg-moviebuster-red/90 transition mb-4"
                                     >
                                         Create Account
                                     </button>
@@ -226,7 +241,7 @@ const Login = () => {
                                     Already have an account?{' '}
                                     <button
                                         onClick={() => setActiveView('login')}
-                                        className="text-moviebuster-red hover:underline"
+                                        className="text-[#f3d100] dark:text-moviebuster-red hover:underline"
                                     >
                                         Sign in
                                     </button>
@@ -252,7 +267,7 @@ const Login = () => {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full bg-moviebuster-red text-white font-medium py-2 rounded-md hover:bg-white/90 hover:text-moviebuster-red transition mb-4"
+                                        className="w-full bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white font-medium py-2 rounded-md hover:bg-[#f3d100]/90 dark:hover:bg-moviebuster-red/90 transition mb-4"
                                     >
                                         Send Reset Link
                                     </button>
@@ -261,7 +276,7 @@ const Login = () => {
                                     Remember your password?{' '}
                                     <button
                                         onClick={() => setActiveView('login')}
-                                        className="text-moviebuster-red hover:underline"
+                                        className="text-[#f3d100] dark:text-moviebuster-red hover:underline"
                                     >
                                         Sign in
                                     </button>
@@ -270,7 +285,7 @@ const Login = () => {
                                     Don't have an account?{' '}
                                     <button
                                         onClick={() => setActiveView('register')}
-                                        className="text-moviebuster-red hover:underline"
+                                        className="text-[#f3d100] dark:text-moviebuster-red hover:underline"
                                     >
                                         Sign up
                                     </button>
@@ -290,7 +305,7 @@ const Login = () => {
                                         setActiveView('login');
                                         setResetSent(false);
                                     }}
-                                    className="text-moviebuster-red hover:underline"
+                                    className="text-[#f3d100] dark:text-moviebuster-red hover:underline"
                                 >
                                     Return to Sign In
                                 </button>

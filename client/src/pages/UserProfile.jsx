@@ -7,6 +7,7 @@ import UserDashboard from '../components/UserDashboard';
 import ProfileContent from '../components/ProfileContent';
 import FavoritesContent from '../components/FavoritesContent';
 import WatchlistContent from '../components/WatchlistContent';
+import ThemeToggle from '../components/ThemeToggle';  // Add this import
 
 const UserProfile = ({ activeTab: initialTab }) => {
     const navigate = useNavigate();
@@ -67,11 +68,17 @@ const UserProfile = ({ activeTab: initialTab }) => {
                 <UserBanner username={userData.username} />
 
                 <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-2xl font-bold mb-6">Hi, {userData.username}! 👋</h1>
+                    <div className="flex items-center justify-between mb-6">
+                        <h1 className="text-2xl font-bold">Hi, {userData.username}! 👋</h1>
+                        <ThemeToggle />
+                    </div>
 
                     <UserDashboard activeTab={activeTab} setActiveTab={setActiveTab} />
 
-                    <div className="mt-6 bg-card rounded-lg shadow-md p-6">
+                    <div className="mt-6 bg-[#000e3d]/50 dark:bg-card rounded-lg shadow-md p-6 
+                        border border-white/20 
+                        shadow-[0_0_15px_rgba(255,255,255,0.07)]
+                        transition-all duration-300 hover:bg-[#000e3d]/60 dark:hover:bg-card/60">
                         {renderContent()}
                     </div>
                 </div>

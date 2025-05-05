@@ -36,7 +36,10 @@ const NotFound = () => {
               Redirecting to home page in {timeLeft} seconds...
             </p>
             <div className="mt-6">
-              <Link to="/" className="px-6 py-3 bg-moviebuster-red text-white rounded-md hover:bg-moviebuster-red/90 transition font-medium">
+              <Link 
+                to="/" 
+                className="px-6 py-3 bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white rounded-md hover:bg-[#f3d100]/90 dark:hover:bg-moviebuster-red/90 transition font-medium"
+              >
                 Go to Home
               </Link>
             </div>

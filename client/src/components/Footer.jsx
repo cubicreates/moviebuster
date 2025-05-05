@@ -1,12 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNewAndPopular = (e) => {
+    e.preventDefault();
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollToTrending: true } });
+    }
+  };
+
   const navigationLinks = [
     { text: 'Home', href: '/' },
-    { text: 'Browse', href: '/search' },
-    { text: 'My List', href: '/my-list' },
-    { text: 'New & Popular', href: '/new' }
+    { text: 'Movies', href: '/movies' },
+    { text: 'TV Shows', href: '/tv-shows' },
+    { text: 'New & Popular', href: '#trending', action: handleNewAndPopular },
+    { text: 'My List', href: '/my-list' }
   ];
 
   const legalLinks = [
@@ -29,7 +40,7 @@ const Footer = () => {
           <div className="mb-8 md:mb-0">
             <Link to="/" className="inline-block">
               <h2 className="text-lg font-bold mb-4">
-                <span className="text-moviebuster-blue dark:text-moviebuster-red">MOVIEBUSTER</span>
+                <span className="text-[#f3d100] dark:text-moviebuster-red">MOVIEBUSTER</span>
               </h2>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -67,17 +78,20 @@ const FooterColumn = ({ title, links }) => {
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.text}>
-            {link.href ? (
+            {link.action ? (
+              <button 
+                onClick={link.action}
+                className="text-sm text-muted-foreground hover:text-[#f3d100] dark:hover:text-moviebuster-red transition-colors"
+              >
+                {link.text}
+              </button>
+            ) : (
               <Link 
                 to={link.href}
-                className="text-sm text-muted-foreground hover:text-white transition-colors"
+                className="text-sm text-muted-foreground hover:text-[#f3d100] dark:hover:text-moviebuster-red transition-colors"
               >
                 {link.text}
               </Link>
-            ) : (
-              <span className="text-sm text-muted-foreground">
-                {link.text}
-              </span>
             )}
           </li>
         ))}

@@ -80,7 +80,7 @@ const WatchlistContent = () => {
     if (isLoading) {
         return (
             <div className="py-8 text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-moviebuster-red mx-auto"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f3d100] dark:border-moviebuster-red mx-auto"></div>
                 <p className="mt-4">Loading your watchlist...</p>
             </div>
         );
@@ -89,7 +89,7 @@ const WatchlistContent = () => {
     if (watchlist.length === 0) {
         return (
             <div className="py-12 text-center">
-                <List className="mx-auto h-16 w-16 text-muted-foreground/40 mb-4" />
+                <List className="mx-auto h-16 w-16 text-[#f3d100]/40 dark:text-muted-foreground/40 mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Your watchlist is empty</h3>
                 <p className="text-muted-foreground">Movies you want to watch later will appear here</p>
             </div>

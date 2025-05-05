@@ -22,10 +22,11 @@ const UserDashboard = ({ activeTab, setActiveTab }) => {
                 <button
                     key={tab.id}
                     onClick={() => handleTabChange(tab)}
-                    className={`flex items-center space-x-2 py-3 px-4 border-b-2 transition-colors ${activeTab === tab.id
-                            ? 'border-moviebuster-red text-moviebuster-red'
-                            : 'border-transparent hover:border-moviebuster-red/50 hover:text-moviebuster-red/80'
-                        }`}
+                    className={`flex items-center space-x-2 py-3 px-4 border-b-2 transition-colors ${
+                        activeTab === tab.id
+                            ? 'border-[#f3d100] dark:border-moviebuster-red text-[#f3d100] dark:text-moviebuster-red'
+                            : 'border-transparent hover:border-[#f3d100]/50 dark:hover:border-moviebuster-red/50 hover:text-[#f3d100]/80 dark:hover:text-moviebuster-red/80'
+                    }`}
                 >
                     {tab.icon}
                     <span>{tab.label}</span>

@@ -21,19 +21,20 @@ const UserDropdown = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 z-50" onClick={onClose}>
             <div
-                className="absolute right-4 top-16 w-64 rounded-lg bg-black/80 backdrop-blur-sm 
-                shadow-lg border border-white/10 animate-in fade-in"
+                className="absolute right-4 top-16 w-64 rounded-lg bg-[#000e3d]/80 dark:bg-black/80 backdrop-blur-sm 
+                shadow-lg border border-[#f3d100]/10 dark:border-white/10 animate-in fade-in"
                 onClick={e => e.stopPropagation()}
             >
                 {/* User info */}
-                <div className="p-4 flex flex-col items-center border-b border-white/10">
-                    <div className="w-12 h-12 rounded-full bg-moviebuster-red flex items-center justify-center">
-                        <span className="text-xl font-bold text-white">
+                <div className="p-4 flex flex-col items-center border-b border-[#f3d100]/10 dark:border-white/10">
+                    {/* Keep profile photo colors unchanged */}
+                    <div className="w-12 h-12 rounded-full bg-[#f3d100] dark:bg-moviebuster-red flex items-center justify-center">
+                        <span className="text-xl font-bold text-[#000e3d] dark:text-white">
                             {username.charAt(0).toUpperCase()}
                         </span>
                     </div>
-                    <h3 className="mt-2 font-medium text-lg text-white">{username}</h3>
-                    <p className="text-sm text-white/60">{email}</p>
+                    <h3 className="mt-2 font-medium text-lg text-[#f3d100] dark:text-white">{username}</h3>
+                    <p className="text-sm text-[#f3d100]/60 dark:text-white/60">{email}</p>
                 </div>
 
                 {/* Menu items */}
@@ -44,11 +45,12 @@ const UserDropdown = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Logout */}
-                <div className="p-2 border-t border-white/10">
+                <div className="p-2 border-t border-[#f3d100]/10 dark:border-white/10">
                     <button
                         onClick={handleLogout}
                         className="w-full flex items-center justify-center space-x-2 px-4 py-2 
-                        text-white/80 hover:text-moviebuster-red hover:bg-white/5 rounded-md transition-colors"
+                        text-[#f3d100]/80 hover:text-[#f3d100] dark:text-white/80 dark:hover:text-moviebuster-red 
+                        hover:bg-[#f3d100]/5 dark:hover:bg-white/5 rounded-md transition-colors"
                     >
                         <LogOut className="h-4 w-4" />
                         <span>Logout</span>
@@ -62,8 +64,9 @@ const UserDropdown = ({ isOpen, onClose }) => {
 const MenuItem = ({ to, icon, label, onClick }) => (
     <Link
         to={to}
-        className="flex items-center px-4 py-2 text-white/80 hover:text-moviebuster-red 
-        hover:bg-white/5 transition-colors"
+        className="flex items-center px-4 py-2 text-[#f3d100]/80 dark:text-white/80 
+        hover:text-[#f3d100] dark:hover:text-moviebuster-red 
+        hover:bg-[#f3d100]/5 dark:hover:bg-white/5 transition-colors"
         onClick={onClick}
     >
         <span className="mr-3">{React.cloneElement(icon, { size: 18 })}</span>

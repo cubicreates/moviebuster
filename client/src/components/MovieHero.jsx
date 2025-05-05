@@ -46,13 +46,13 @@ const MovieHero = ({ movie }) => {
               <span>Year: <span>{movie?.release_date?.split('-')[0]}</span></span>
               <span>Duration: <span>{movie?.runtime} min</span></span>
               <span>Rating: 
-                <span className="bg-moviebuster-red/80 backdrop-blur-sm px-2 py-0.5 rounded inline-flex items-center gap-1 ml-1">
+                <span className="bg-[#f3d100]/80 dark:bg-moviebuster-red/80 backdrop-blur-sm px-2 py-0.5 rounded inline-flex items-center gap-1 ml-1 text-[#000e3d] dark:text-white">
                   <Star className="w-4 h-4 fill-current" />
                   {movie?.vote_average?.toFixed(1)}
                 </span>
               </span>
             </div>
-            <button className="px-6 py-3 bg-moviebuster-red/80 backdrop-blur-sm text-white rounded-md flex items-center gap-2 hover:bg-white/90 hover:text-moviebuster-red transition duration-300 mb-8">
+            <button className="px-6 py-3 bg-[#f3d100]/80 dark:bg-moviebuster-red/80 backdrop-blur-sm text-[#000e3d] dark:text-white rounded-md flex items-center gap-2 hover:bg-[#000e3d]/90 hover:text-[#f3d100] dark:hover:text-moviebuster-red transition duration-300 mb-8">
               <Play className="w-5 h-5" />
               Watch Now
             </button>
@@ -66,12 +66,12 @@ const MovieHero = ({ movie }) => {
                 )}
                 {movie?.production_companies?.[0] && (
                   <p className="text-base">
-                    <span className="text-moviebuster-yellow">{movie.production_companies[0].name}</span>
+                    <span className="text-[#f3d100] dark:text-moviebuster-yellow">{movie.production_companies[0].name}</span>
                   </p>
                 )}
                 {movie?.genres && movie.genres.length > 0 && (
                   <p className="text-base">
-                    Genres: <span className="text-moviebuster-yellow">{getGenres()}</span>
+                    Genres: <span className="text-[#f3d100] dark:text-moviebuster-yellow">{getGenres()}</span>
                   </p>
                 )}
               </div>

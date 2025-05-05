@@ -46,6 +46,84 @@ const MovieInfo = ({ movie, recommendedMovies = [], topRatedMovies = [] }) => {
 
 const MovieGridItem = ({ movie, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const [isFavorite, setIsFavorite] = useState(() => {
+    if (!isAuthenticated) return false;
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user?.favorites?.includes(movie.id) || false;
+  });
+  const [isInWatchlist, setIsInWatchlist] = useState(() => {
+    if (!isAuthenticated) return false;
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user?.watchlist?.includes(movie.id) || false;
+  });
+
+  const handleFavorite = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    try {
+      const response = await fetch('http://localhost:5100/api/users/favorites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          movieId: movie.id
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsFavorite(!isFavorite);
+      }
+    } catch (error) {
+      console.error('Error updating favorites:', error);
+    }
+  };
+
+  const handleAddToList = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    try {
+      const response = await fetch('http://localhost:5100/api/users/watchlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          movieId: movie.id
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setIsInWatchlist(!isInWatchlist);
+      }
+    } catch (error) {
+      console.error('Error updating watchlist:', error);
+    }
+  };
+
   const title = movie.title || movie.name || 'Unknown Title';
   const overview = movie.overview || 'No description available';
 
@@ -79,20 +157,42 @@ const MovieGridItem = ({ movie, onClick }) => {
                 e.stopPropagation();
                 onClick();
               }}
-              className="p-2 bg-moviebuster-red rounded-full hover:bg-white/90 hover:text-moviebuster-red transition"
+              className="p-2 bg-[#f3d100] dark:bg-moviebuster-red rounded-full hover:bg-[#000e3d] hover:text-[#f3d100] dark:hover:text-moviebuster-red transition"
             >
-              <Play className="w-4 h-4 text-moviebuster-darkblue" />
+              <Play className="w-4 h-4 text-[#000e3d] hover:text-[#f3d100] dark:text-moviebuster-white " />
             </button>
-            <button className="p-2 bg-black/40 rounded-full hover:bg-black/60 transition">
-              <Plus className="w-4 h-4 text-white" />
+            <button 
+              onClick={handleAddToList}
+              className={`p-2 rounded-full transition ${
+                isAuthenticated && isInWatchlist 
+                  ? 'bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white' 
+                  : 'bg-black/40 hover:bg-[#f3d100]/60 dark:hover:bg-moviebuster-red/60'
+              }`}
+            >
+              <Plus className={`w-4 h-4 ${
+                isAuthenticated && isInWatchlist 
+                  ? 'text-[#000e3d] dark:text-white' 
+                  : 'text-white hover:text-[#000e3d] dark:hover:text-white'
+              }`} />
             </button>
-            <button className="p-2 bg-black/40 rounded-full hover:bg-black/60 transition">
-              <Heart className="w-4 h-4 text-white" />
+            <button 
+              onClick={handleFavorite}
+              className={`p-2 rounded-full transition ${
+                isAuthenticated && isFavorite 
+                  ? 'bg-[#f3d100] dark:bg-moviebuster-red text-[#000e3d] dark:text-white' 
+                  : 'bg-black/40 hover:bg-[#f3d100]/60 dark:hover:bg-moviebuster-red/60'
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${
+                isAuthenticated && isFavorite 
+                  ? 'fill-[#000e3d] dark:fill-white text-[#000e3d] dark:text-white' 
+                  : 'text-white hover:text-[#000e3d] dark:hover:text-white'
+              }`} />
             </button>
           </div>
           {movie.vote_average && (
             <div className="text-sm text-white/90">
-              <span className="text-moviebuster-yellow font-bold">
+              <span className="text-[#f3d100] dark:text-moviebuster-yellow font-bold">
                 {movie.vote_average.toFixed(1)}
               </span>/10
             </div>
@@ -124,7 +224,7 @@ const MovieListItem = ({ movie, onClick }) => (
       </div>
     </div>
     <button 
-      className="p-2 bg-moviebuster-red/80 rounded-full hover:bg-white/90 hover:text-moviebuster-red transition-colors flex-shrink-0"
+      className="p-2 bg-[#f3d100]/80 dark:bg-moviebuster-red/80 rounded-full hover:bg-white/90 hover:text-[#000e3d] dark:hover:text-moviebuster-red transition-colors flex-shrink-0"
       onClick={(e) => {
         e.stopPropagation();
         onClick();

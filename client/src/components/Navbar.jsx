@@ -58,7 +58,7 @@ const Navbar = ({ onNewClick }) => {
         {/* Logo with Link */}
         <Link to="/" className="flex items-center">
           <h1 className="text-2xl font-bold">
-            <span className="text-moviebuster-red">MOVIEBUSTER</span>
+            <span className="text-[#f3d100] dark:text-moviebuster-red">MOVIEBUSTER</span>
           </h1>
         </Link>
         
@@ -78,8 +78,8 @@ const Navbar = ({ onNewClick }) => {
             className="p-1 rounded-full hover:ring-2 hover:ring-white/70 transition-all duration-200"
           >
             {isAuthenticated ? (
-              <div className="w-8 h-8 rounded-full bg-moviebuster-red flex items-center justify-center">
-                <span className="text-sm font-bold text-white">
+              <div className="w-8 h-8 rounded-full bg-[#f3d100] dark:bg-moviebuster-red flex items-center justify-center">
+                <span className="text-sm font-bold text-[#000e3d] dark:text-white">
                   {username.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -147,7 +147,7 @@ const NavLinks = ({ mobile = false, onNewClick, isAuthenticated }) => {
           <button
             key={link.path}
             onClick={link.action}
-            className={`transition-colors hover:text-moviebuster-red text-white/90
+            className={`transition-colors hover:text-[#f3d100] dark:hover:text-moviebuster-red text-white/90
               ${mobile ? 'py-3 border-b border-border w-full text-left' : ''}`}
           >
             {link.name}
@@ -156,7 +156,7 @@ const NavLinks = ({ mobile = false, onNewClick, isAuthenticated }) => {
           <NavLink
             key={link.path}
             to={link.path}
-            className={`transition-colors hover:text-moviebuster-red text-white/90
+            className={`transition-colors hover:text-[#f3d100] dark:hover:text-moviebuster-red text-white/90
               ${mobile ? 'py-3 border-b border-border' : ''}`}
             onClick={() => mobile && setIsMobileMenuOpen(false)}
           >

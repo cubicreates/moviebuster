@@ -51,11 +51,11 @@ const UserBanner = () => {
             {/* Profile Image */}
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
                 <div className="w-24 h-24 md:w-32 md:h-32 rounded-full 
-                    bg-moviebuster-red dark:bg-moviebuster-red 
+                    bg-[#f3d100] dark:bg-moviebuster-red 
                     flex items-center justify-center 
                     border-4 border-background dark:border-white"
                 >
-                    <span className="text-4xl md:text-5xl font-bold text-background dark:text-white">
+                    <span className="text-4xl md:text-5xl font-bold text-[#000e3d] dark:text-white">
                         {username.charAt(0).toUpperCase()}
                     </span>
                 </div>
