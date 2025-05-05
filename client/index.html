@@ -3,18 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel='icon' type='image/x-icon' href='/logo.png'>
+    <link rel='icon' type='image/x-icon' href='/favicon.ico'>
 
     <title>MovieBuster</title>
 
     <meta name="description" content="Your favorite movie browsing app" />
     <meta name="author" content="Adit Ghosh" />
+    <meta name="theme-color" content="#000e3d" />
+    
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
   </head>
 
   <body>
     <div id="root"></div>
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.jsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
