@@ -45,6 +45,7 @@ const MovieInfo = ({ movie, recommendedMovies = [], topRatedMovies = [] }) => {
 };
 
 const MovieGridItem = ({ movie, onClick }) => {
+  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   const [isFavorite, setIsFavorite] = useState(() => {
@@ -63,7 +64,7 @@ const MovieGridItem = ({ movie, onClick }) => {
     e.stopPropagation();
     
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate('/not-logged-in');
       return;
     }
 
@@ -96,7 +97,7 @@ const MovieGridItem = ({ movie, onClick }) => {
     e.stopPropagation();
     
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate('/not-logged-in');
       return;
     }
 
@@ -157,9 +158,9 @@ const MovieGridItem = ({ movie, onClick }) => {
                 e.stopPropagation();
                 onClick();
               }}
-              className="p-2 bg-[#f3d100] dark:bg-moviebuster-red rounded-full hover:bg-[#000e3d] hover:text-[#f3d100] dark:hover:text-moviebuster-red transition"
+              className="p-2 bg-[#f3d100] dark:bg-moviebuster-red rounded-full hover:bg-[#000e3d] hover:text-[#f3d100] dark:hover:text-white transition"
             >
-              <Play className="w-4 h-4 text-[#000e3d] hover:text-[#f3d100] dark:text-moviebuster-white " />
+              <Play className="w-4 h-4 text-[#000e3d] hover:text-[#f3d100] dark:text-white dark:hover:text-white" />
             </button>
             <button 
               onClick={handleAddToList}
@@ -224,13 +225,13 @@ const MovieListItem = ({ movie, onClick }) => (
       </div>
     </div>
     <button 
-      className="p-2 bg-[#f3d100]/80 dark:bg-moviebuster-red/80 rounded-full hover:bg-white/90 hover:text-[#000e3d] dark:hover:text-moviebuster-red transition-colors flex-shrink-0"
+      className="p-2 bg-[#f3d100]/80 dark:bg-moviebuster-red/80 rounded-full hover:bg-white/90 hover:text-[#000e3d] dark:hover:text-white transition-colors flex-shrink-0"
       onClick={(e) => {
         e.stopPropagation();
         onClick();
       }}
     >
-      <Play className="w-4 h-4" />
+      <Play className="w-4 h-4 text-[#000e3d] dark:text-white" />
     </button>
   </div>
 );
